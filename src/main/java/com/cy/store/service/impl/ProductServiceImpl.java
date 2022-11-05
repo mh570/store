@@ -30,20 +30,15 @@ public class ProductServiceImpl implements IProductService {
 
     @Override
     public Product findById(Integer id) {
-        // 根据参数id调用私有方法执行查询，获取商品数据
         Product product = productMapper.findById(id);
-        // 判断查询结果是否为null
         if (product == null) {
-            // 是：抛出ProductNotFoundException
             throw new ProductNotFoundException("尝试访问的商品数据不存在");
         }
-        // 将查询结果中的部分属性设置为null
         product.setPriority(null);
         product.setCreatedUser(null);
         product.setCreatedTime(null);
         product.setModifiedUser(null);
         product.setModifiedTime(null);
-        // 返回查询结果
         return product;
     }
 }

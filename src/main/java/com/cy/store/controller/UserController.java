@@ -26,9 +26,7 @@ public class UserController extends BaseController {
 
     @RequestMapping("reg")
     public JsonResult<Void> reg(User user) {
-        // 调用业务对象执行注册
         userService.reg(user);
-        // 返回
         return new JsonResult<Void>(OK);
     }
 
@@ -65,7 +63,6 @@ public class UserController extends BaseController {
         // System.out.println("Session中的uid=" + getUidFromSession(session));
         // System.out.println("Session中的username=" + getUsernameFromSession(session));
 
-        // 将以上返回值和状态码OK封装到响应结果中并返回
         return new JsonResult<User>(OK, data);
     }
 
@@ -75,7 +72,6 @@ public class UserController extends BaseController {
         Integer uid = getUidFromSession(session);
         String username = getUsernameFromSession(session);
 
-        // 调用业务对象执行修改密码
         userService.changePassword(uid, username, oldPassword, newPassword);
         // 返回成功
         return new JsonResult<Void>(OK);
@@ -85,9 +81,7 @@ public class UserController extends BaseController {
     public JsonResult<User> getByUid(HttpSession session) {
         // 从HttpSession对象中获取uid
         Integer uid = getUidFromSession(session);
-        // 调用业务对象执行获取数据
         User data = userService.getByUid(uid);
-        // 响应成功和数据
         return new JsonResult<User>(OK, data);
     }
 
@@ -96,7 +90,6 @@ public class UserController extends BaseController {
         // 从HttpSession对象中获取uid和username
         Integer uid = getUidFromSession(session);
         String username = getUsernameFromSession(session);
-        // 调用业务对象执行修改用户资料
         userService.changeInfo(uid, username, user);
         // 响应成功
         return new JsonResult<Void>(OK);
@@ -117,30 +110,25 @@ public class UserController extends BaseController {
 
     @PostMapping("change_avatar")
     public JsonResult<String> changeAvatar(@RequestParam("file") MultipartFile file, HttpSession session) {
-        // 判断上传的文件是否为空
         if (file.isEmpty()) {
-            // 是：抛出异常
             throw new FileEmptyException("上传的头像文件不允许为空");
         }
 
         // 判断上传的文件大小是否超出限制值
         if (file.getSize() > AVATAR_MAX_SIZE) { // getSize()：返回文件的大小，以字节为单位
-            // 是：抛出异常
             throw new FileSizeException("不允许上传超过" + (AVATAR_MAX_SIZE / 1024) + "KB的头像文件");
         }
 
-        // 判断上传的文件类型是否超出限制
         String contentType = file.getContentType();
         // boolean contains(Object o)：当前列表若包含某元素，返回结果为true；若不包含该元素，返回结果为false
         if (!AVATAR_TYPES.contains(contentType)) {
-            // 是：抛出异常
             throw new FileTypeException("不支持使用该类型的文件作为头像，允许的文件类型：" + AVATAR_TYPES);
         }
 
         // 获取当前项目的绝对磁盘路径
         String parent = session.getServletContext().getRealPath("upload");
         System.out.println(parent);
-        // 保存头像文件的文件夹
+
         File dir = new File(parent);
         if (!dir.exists()) {
             dir.mkdirs();
@@ -157,14 +145,11 @@ public class UserController extends BaseController {
 
         // 创建文件对象，表示保存的头像文件
         File dest = new File(dir, filename);
-        // 执行保存头像文件
         try {
             file.transferTo(dest);
         } catch (IllegalStateException e) {
-            // 抛出异常
             throw new FileStateException("文件状态异常，可能文件已被移动或删除");
         } catch (IOException e) {
-            // 抛出异常
             throw new FileUploadIOException("上传文件时读写错误，请稍后重新尝试");
         }
 
@@ -173,10 +158,8 @@ public class UserController extends BaseController {
         // 从Session中获取uid和username
         Integer uid = getUidFromSession(session);
         String username = getUsernameFromSession(session);
-        // 将头像写入到数据库中
         userService.changeAvatar(uid, username, avatar);
 
-        // 返回成功头像路径
         return new JsonResult<String>(OK, avatar);
     }
 }

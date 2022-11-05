@@ -25,9 +25,7 @@ public class ProductController extends BaseController {
 
     @GetMapping("{id}/details")
     public JsonResult<Product> getById(@PathVariable("id") Integer id) {
-        // 调用业务对象执行获取数据
         Product data = productService.findById(id);
-        // 返回成功和数据
         return new JsonResult<Product>(OK, data);
     }
 }

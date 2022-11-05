@@ -23,7 +23,6 @@ public class CartController extends BaseController {
     public JsonResult<Void> addToCart(Integer pid, Integer amount, HttpSession session) {
         System.out.println("pid=" + pid);
         System.out.println("amount=" + amount);
-        // 从Session中获取uid和username
         Integer uid = getUidFromSession(session);
         String username = getUsernameFromSession(session);
         // 调用业务对象执行添加到购物车
